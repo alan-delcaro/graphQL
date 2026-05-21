@@ -248,5 +248,5 @@
   }
 
   window.Pages = window.Pages || {};
-  window.Pages.pedidos = { render };
+  window.Pages.pedidos = { meta: { mf: MF_CLIENT.clientName, label: "Pedidos Médicos" }, render };
 })();

@@ -106,5 +106,5 @@
   }
 
   window.Pages = window.Pages || {};
-  window.Pages.vacinas = { render };
+  window.Pages.vacinas = { meta: { mf: MF_CLIENT.clientName, label: "Vacinas" }, render };
 })();

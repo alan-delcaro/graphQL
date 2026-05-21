@@ -749,5 +749,5 @@
   }
 
   window.Pages = window.Pages || {};
-  window.Pages.exames = { render };
+  window.Pages.exames = { meta: { mf: MF_RESULTS.clientName, label: "Exames" }, render };
 })();

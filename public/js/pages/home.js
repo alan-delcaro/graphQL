@@ -233,5 +233,5 @@
   }
 
   window.Pages = window.Pages || {};
-  window.Pages.home = { render };
+  window.Pages.inicio = { meta: { mf: MF_CLIENT.clientName, label: "Início" }, render };
 })();

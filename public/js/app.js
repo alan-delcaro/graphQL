@@ -1,29 +1,6 @@
 (function () {
   "use strict";
 
-  const MF_MAP = {
-    inicio:    "@saude-connect/npac-navigation-front-home",
-    exames:    "@saude-connect/npac-result-front-exams",
-    consultas: "@saude-connect/lsw-front-ag-consultas",
-    vacinas:   "@saude-connect/npac-scheduling-front-vacinas",
-    pedidos:   "@saude-connect/front-pedidos-medicos",
-  };
-
-  const PAGE_MAP = {
-    inicio:    "home",
-    exames:    "exames",
-    consultas: "consultas",
-    vacinas:   "vacinas",
-    pedidos:   "pedidos",
-  };
-
-  const PAGE_LABELS = {
-    inicio:    "Início",
-    exames:    "Exames",
-    consultas: "Consultas",
-    vacinas:   "Vacinas",
-    pedidos:   "Pedidos Médicos",
-  };
 
   let isLoggedIn = false;
   let viewer = null;
@@ -31,42 +8,27 @@
 
   // ── DT helpers ────────────────────────────────────────────────────────────────
 
-  const GQL_VAR_KEYS = ["patientid","id","reportid","slotid","labid","slot","term","queuetype","especialidade","modalidade","input","variable","cpf"];
-  const MUTATION_RE  = /^(schedule|create|update|delete|register|send|cancel|add|remove)/i;
-
   function resolveOpType(query, opName) {
     if (!query) return "unknown";
     const m = query.match(/^\s*(query|mutation|subscription)/i);
     if (m) return m[1].toLowerCase();
-    if (/^\s*#/.test(query)) return MUTATION_RE.test(opName) ? "mutation" : "query";
+    if (/^\s*#/.test(query)) {
+      return /^(schedule|create|update|delete|register|send|cancel|add|remove)/i.test(opName)
+        ? "mutation" : "query";
+    }
     return "unknown";
   }
 
-  function filterGqlVars(vars) {
-    const lowered = {};
-    Object.keys(vars).forEach(function(k) { lowered[k.toLowerCase()] = vars[k]; });
-    const result = {};
-    GQL_VAR_KEYS.forEach(function(k) { if (lowered[k] != null) result[k] = String(lowered[k]); });
-    return result;
-  }
-
   function enrichGqlProps(out, context) {
-    const body     = JSON.parse(context.request.body || "{}");
-    const hdrs     = context.request.headers || {};
-    const opName   = body.operationName || "unknown";
-    const filtered = filterGqlVars(body.variables || {});
-    const opType   = resolveOpType(body.query, opName);
-
-    const rawQuery = body.query || "";
-    const querySnippet = rawQuery.startsWith("#") ? "" : rawQuery.slice(0, 500);
+    const body = JSON.parse(context.request.body || "{}");
+    const hdrs = context.request.headers || {};
+    const opName = body.operationName || "unknown";
 
     out["event_properties.graphql_operation_name"] = opName;
-    out["event_properties.graphql_operation_type"] = opType;
-    out["event_properties.graphql_operation_vars"] = JSON.stringify(filtered);
+    out["event_properties.graphql_operation_type"] = resolveOpType(body.query, opName);
+    out["event_properties.graphql_operation_vars"] = JSON.stringify(body.variables || {});
     out["event_properties.graphql_client"]         = hdrs["apollographql-client-name"]    || "unknown";
     out["event_properties.apollo_version"]         = hdrs["apollographql-client-version"] || "0.0.0";
-    if (querySnippet) out["event_properties.graphql_query"] = querySnippet;
-    console.log("[DT VALIDATE] vars:", JSON.stringify(filtered), "| opType:", opType, "| op:", opName);
   }
 
   function setupDynatraceGrail() {
@@ -144,12 +106,12 @@
   function route(pageName) {
     if (!isLoggedIn) return;
 
-    const mfName    = MF_MAP[pageName] || "shell";
-    const pageLabel = PAGE_LABELS[pageName] || pageName;
+    const page = window.Pages?.[pageName];
+    if (!page) return;
 
-    window.dtCurrentMF        = mfName;
+    window.dtCurrentMF        = page.meta?.mf    ?? "shell";
     window.dtCurrentPage      = pageName;
-    window.dtCurrentPageLabel = pageLabel;
+    window.dtCurrentPageLabel = page.meta?.label ?? pageName;
 
     document.querySelectorAll(".nav-item").forEach(function (item) {
       item.classList.remove("active");
@@ -160,12 +122,7 @@
     if (!container) return;
     container.innerHTML = "";
 
-    const moduleKey = PAGE_MAP[pageName];
-    if (window.Pages?.[moduleKey]?.render) {
-      window.Pages[moduleKey].render(container);
-    } else {
-      container.innerHTML = "<p>Pagina nao encontrada: " + pageName + "</p>";
-    }
+    page.render(container);
   }
 
   function showEmConstrucao(label) {

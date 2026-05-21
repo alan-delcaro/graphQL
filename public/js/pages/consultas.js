@@ -538,5 +538,5 @@
   }
 
   window.Pages = window.Pages || {};
-  window.Pages.consultas = { render };
+  window.Pages.consultas = { meta: { mf: MF_CLIENT.clientName, label: "Consultas" }, render };
 })();
