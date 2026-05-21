@@ -1,0 +1,18 @@
+{
+  "name": "saude-connect-apollo-backend",
+  "version": "4.0.0",
+  "description": "Apollo GraphQL Server — SaudeConnect Phase 4 (Dynatrace RUM Demo)",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "@apollo/server": "^5.0.0",
+    "graphql": "^16.14.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

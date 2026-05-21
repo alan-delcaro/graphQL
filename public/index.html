@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SaudeConnect — Portal do Paciente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/styles.css" />
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+       DYNATRACE RUM 3rd Gen — JavaScript Tag (dynatrace namespace)
+       v1.333.0 | Grail data model | user.events como entidade central
+       O que o Dynatrace vê neste estado:
+         • Sessões identificadas por email (dynatrace.identifyUser)
+         • Cada operação GraphQL = user event nomeado + event_properties.*
+         • GraphQL errors (HTTP 200 + body.errors) visíveis no Error Inspector
+         • Session properties: patient_id, health_plan (via addEventModifier)
+         • MF context + operation + variables filtradas por evento
+       ═══════════════════════════════════════════════════════════════════════ -->
+    <script
+      type="text/javascript"
+      src="https://js-cdn.dynatrace.com/jstag/16ab023090d/bf78240axh/4cc2f321170cdf60_complete.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <!-- ── LOGIN SCREEN ───────────────────────────────────────────────────── -->
+    <div id="login-screen" class="login-screen">
+      <div class="login-left">
+        <div class="login-left-content">
+          <div class="login-logo-white">
+            <span class="login-logo-text">SaudeConnect</span>
+          </div>
+          <h1 class="login-headline">
+            Cuide da sua saúde<br />com tudo em um só lugar
+          </h1>
+          <div class="login-cards-quick">
+            <div class="quick-card">
+              <span class="quick-card-icon">📋</span>
+              <span>Conferir resultados</span>
+              <span class="quick-arrow">›</span>
+            </div>
+            <div class="quick-card">
+              <span class="quick-card-icon">📅</span>
+              <span>Agendar exames</span>
+              <span class="quick-arrow">›</span>
+            </div>
+          </div>
+          <p class="login-subtitle">
+            Conectamos você a laboratórios e médicos em todo o país
+          </p>
+          <div class="login-partners">
+            <span>LabCentro</span>
+            <span>DiagMed</span>
+            <span>LabPro</span>
+            <span>BioScan</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="login-right">
+        <div class="login-form-container">
+          <div class="nav-logo">
+            <span class="logo-text">SaudeConnect</span>
+          </div>
+
+          <h2 class="login-form-title">Acesse ou crie uma conta</h2>
+          <p class="login-form-subtitle">
+            Agende exames, consultas e vacinas e acompanhe seus resultados.
+          </p>
+
+          <form id="login-form" class="login-form" novalidate>
+            <div class="field-group">
+              <label for="cpf">Digite o CPF para continuar</label>
+              <input
+                type="text"
+                id="cpf"
+                name="cpf"
+                placeholder="000.000.000-00"
+                maxlength="14"
+                autocomplete="username"
+                value="432.891.765-02"
+              />
+            </div>
+
+            <div class="field-group">
+              <label for="password">Senha</label>
+              <div class="password-wrap">
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="••••••••"
+                  autocomplete="current-password"
+                  value="demo1234"
+                />
+                <button
+                  type="button"
+                  class="toggle-pwd"
+                  aria-label="Mostrar senha"
+                  data-dt-name="Mostrar/ocultar senha"
+                >
+                  👁
+                </button>
+              </div>
+              <a href="#" class="forgot-link" data-dt-name="Esqueci a senha">Esqueci a senha</a>
+            </div>
+
+            <div
+              id="login-error"
+              class="login-error"
+              style="display: none"
+            ></div>
+
+            <button type="submit" class="btn-primary btn-full" id="login-btn" data-dt-children-name="Acessar conta">
+              <span class="btn-text">Acessar</span>
+              <span class="btn-spinner" style="display: none">⏳</span>
+            </button>
+
+            <label class="checkbox-label">
+              <input type="checkbox" checked /> Permanecer conectado
+              <span class="help-icon">ⓘ</span>
+            </label>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── APP SHELL (oculto até login) ─────────────────────────────────────── -->
+    <div id="app-shell" class="app-shell" style="display: none">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="nav-logo sidebar-logo">
+            <span class="logo-text">SaudeConnect</span>
+          </div>
+        </div>
+
+        <div class="sidebar-user">
+          <span class="sidebar-greeting"
+            >Olá, <strong id="sidebar-name">Alan</strong></span
+          >
+        </div>
+
+        <nav class="sidebar-nav">
+          <a href="#/inicio" class="nav-item" data-page="inicio" data-dt-name="Nav: Início">
+            <span class="nav-icon">🏠</span> Início
+          </a>
+          <a href="#/exames" class="nav-item" data-page="exames" data-dt-name="Nav: Exames">
+            <span class="nav-icon nav-icon-exames">🧪</span> Exames
+          </a>
+          <a href="#/consultas" class="nav-item" data-page="consultas" data-dt-name="Nav: Consultas">
+            <span class="nav-icon">👨‍⚕️</span> Consultas
+          </a>
+          <a href="#/vacinas" class="nav-item" data-page="vacinas" data-dt-name="Nav: Vacinas">
+            <span class="nav-icon">💉</span> Vacinas
+          </a>
+          <a href="#/pedidos" class="nav-item" data-page="pedidos" data-dt-name="Nav: Pedidos Médicos">
+            <span class="nav-icon">📋</span> Pedidos
+          </a>
+
+          <div class="nav-section-label">Geral</div>
+
+          <a href="#" class="nav-item nav-item-sm" data-dt-name="Dados cadastrais">
+            <span class="nav-icon">👤</span> Dados cadastrais
+          </a>
+          <a href="#" class="nav-item nav-item-sm" data-dt-name="Minha família">
+            <span class="nav-icon">👨‍👩‍👧</span> Minha família
+          </a>
+          <a href="#" class="nav-item nav-item-sm" data-dt-name="Segurança">
+            <span class="nav-icon">🔒</span> Segurança
+          </a>
+          <a href="#" class="nav-item nav-item-sm" data-dt-name="Privacidade">
+            <span class="nav-icon">🛡️</span> Privacidade
+          </a>
+          <a href="#" class="nav-item nav-item-sm" data-dt-name="Termos de uso">
+            <span class="nav-icon">📋</span> Termos
+          </a>
+          <a href="#" class="nav-item nav-item-sm" data-dt-name="Ajuda">
+            <span class="nav-icon">❓</span> Ajuda
+          </a>
+          <a
+            href="#"
+            class="nav-item nav-item-sm nav-item-sair"
+            id="logout-btn"
+            data-dt-name="Sair da conta"
+          >
+            <span class="nav-icon">↩️</span> Sair
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div id="page-container"></div>
+      </main>
+    </div>
+
+    <!-- ── MODAL (global) ────────────────────────────────────────────────────── -->
+    <div id="modal-overlay" class="modal-overlay" style="display: none">
+      <div id="modal-box" class="modal-box">
+        <button class="modal-close" id="modal-close-btn" data-dt-name="Fechar modal">✕</button>
+        <div id="modal-content"></div>
+      </div>
+    </div>
+
+    <!-- ── TOAST ─────────────────────────────────────────────────────────────── -->
+    <div id="toast" class="toast" style="display: none"></div>
+
+    <!-- ── Apollo Client via CDN (esm.sh) ──────────────────────────────────── -->
+    <script type="module">
+      import {
+        ApolloClient,
+        InMemoryCache,
+        HttpLink,
+        ApolloLink,
+        from,
+        gql as gqlTag,
+      } from "https://esm.sh/@apollo/client@3?bundle";
+      window.ApolloClient = ApolloClient;
+      window.InMemoryCache = InMemoryCache;
+      window.HttpLink = HttpLink;
+      window.ApolloLink = ApolloLink;
+      window.from = from;
+      window.gqlTag = gqlTag;
+      console.log("[Apollo] Client loaded via esm.sh CDN");
+    </script>
+
+    <!-- ── Scripts (ordem importa) ───────────────────────────────────────────── -->
+    <script src="/js/dynatrace-apollo-link.js"></script>
+    <script src="/js/graphql-client.js"></script>
+    <script src="/js/pages/home.js"></script>
+    <script src="/js/pages/exames.js"></script>
+    <script src="/js/pages/consultas.js"></script>
+    <script src="/js/pages/vacinas.js"></script>
+    <script src="/js/pages/pedidos.js"></script>
+    <script src="/js/app.js"></script>
+  </body>
+</html>

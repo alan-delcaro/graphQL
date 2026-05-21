@@ -1,0 +1,13 @@
+{
+  "name": "saude-connect-grail",
+  "version": "6.0.0",
+  "description": "Demo Dynatrace RUM — SaudeConnect Grail (3rd Gen dynatrace API v1.333.0)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

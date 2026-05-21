@@ -1,0 +1,17 @@
+node_modules/
+.DS_Store
+*.bak
+
+# HAR files and internal analysis — never commit
+outros/
+
+# Internal Dynatrace docs — not for public repo
+Docs/AI_ASSISTANT_PROMPT.md
+Docs/CLIENT_HOWTO.md
+Docs/CLIENT_PRESENTATION.md
+Docs/DELIVERY_GUIDE.md
+Docs/DOCUMENTACAO_CLIENTE_INDEX.md
+Docs/RESUMO_EXECUTIVO_PT.md
+Docs/SKILL_GRAPHQL_RUM_AI.md
+.dynatrace-instrumentation-status.md
+ARQUITETURA_CUSTOMIZACOES.md
