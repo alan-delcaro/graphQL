@@ -121,6 +121,7 @@
     const container = document.getElementById("page-container");
     if (!container) return;
     container.innerHTML = "";
+    container.dataset.mf = window.dtCurrentMF || "shell";
 
     page.render(container);
   }
